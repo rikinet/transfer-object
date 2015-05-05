@@ -79,4 +79,16 @@ public class SimpleDtoTest {
 		assertFalse(dto.getFlag());
 		assertEquals(1.25d, dto.getRate(), 0.01d);
 	}
+
+	@Test
+	public void writeTest() {
+		SimpleDto dto = new SimpleDto();
+		dto.setTitle("new title");
+		dto.setAge(42);
+		dto.setFlag(true);
+		dto.setRate(1.005d);
+		String str = dto.toString();
+		System.out.println(str);
+		assertNotNull(str);
+	}
 }

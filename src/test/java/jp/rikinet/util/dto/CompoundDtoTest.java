@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Comparator;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -28,8 +30,14 @@ public class CompoundDtoTest {
 		public String getName() {
 			return jsonObj.getString("name");
 		}
+		public void setName(String name) {
+			jsonObj.put("name", name);
+		}
 		public long getAge() {
 			return jsonObj.getInt("age");
+		}
+		public void setAge(long age) {
+			jsonObj.put("age", age);
 		}
 	}
 	private static class CompoundRoot extends Root {
@@ -59,9 +67,11 @@ public class CompoundDtoTest {
 		}
 		public void setFrom(CompoundSub fromDto) {
 			this.from = fromDto;
+			jsonObj.put("from", fromDto.jsonObj);
 		}
 		public void setTo(CompoundSub toDto) {
 			this.to = toDto;
+			jsonObj.put("to", toDto.jsonObj);
 		}
 	}
 
@@ -85,5 +95,21 @@ public class CompoundDtoTest {
 		assertNotNull(root);
 		assertEquals("alice", root.getFrom().getName());
 		assertEquals(31, root.getTo().getAge());
+	}
+
+	@Test
+	public void writeTest() {
+		CompoundRoot root = new CompoundRoot();
+		CompoundSub subFrom = new CompoundSub();
+		subFrom.setName("cyndi");
+		subFrom.setAge(41);
+		CompoundSub subTo = new CompoundSub();
+		subTo.setName("dave");
+		subTo.setAge(43);
+		root.setFrom(subFrom);
+		root.setTo(subTo);
+		String str = root.toString();
+		System.out.println(str);
+		assertNotNull(str);
 	}
 }
