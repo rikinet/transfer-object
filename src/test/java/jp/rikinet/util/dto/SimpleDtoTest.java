@@ -31,11 +31,23 @@ public class SimpleDtoTest {
 		public long getAge() {
 			return jsonObj.getLong("age");
 		}
+		public boolean getFlag() {
+			return jsonObj.getBoolean("flag");
+		}
+		public double getRate() {
+			return jsonObj.getDouble("rate");
+		}
 		public void setTitle(String title) {
 			jsonObj.put("title", title);
 		}
 		public void setAge(long age) {
 			jsonObj.put("age", age);
+		}
+		public void setFlag(boolean flag) {
+			jsonObj.put("flag", flag);
+		}
+		public void setRate(double rate) {
+			jsonObj.put("rate", rate);
 		}
 	}
 
@@ -49,16 +61,22 @@ public class SimpleDtoTest {
 
 	@Test
 	public void badClassNameTest() {
-		String source = "{\"_class_\":\"BadName\",\"title\":\"foobar\",\"age\":105}";
+		String source = "{\"_class_\":\"BadName\""
+				+ ",\"title\":\"foobar\",\"age\":105"
+				+ ", \"flag\": false, \"rate\": 1.25 }";
 		SimpleDto dto = (SimpleDto) DtoFactory.deserialize(source);
 		assertNull(dto);
 	}
 
 	@Test
 	public void simpleClassTest() {
-		String source = "{\"_class_\":\"SimpleDto\",\"title\":\"foobar\",\"age\":105}";
+		String source = "{\"_class_\":\"SimpleDto\""
+				+ ",\"title\":\"foobar\",\"age\":105"
+				+ ", \"flag\": false, \"rate\": 1.25 }";
 		SimpleDto dto = DtoFactory.deserialize(source);
 		assertEquals("foobar", dto.getTitle());
 		assertEquals(105, dto.getAge());
+		assertFalse(dto.getFlag());
+		assertEquals(1.25d, dto.getRate(), 0.01d);
 	}
 }
