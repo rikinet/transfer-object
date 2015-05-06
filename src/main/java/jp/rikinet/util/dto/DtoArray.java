@@ -6,8 +6,9 @@ import org.json.JSONArray;
  * JSON の配列に相当する Root の補助クラス。
  * JSON の配列が任意の型の詰め合わせを許容しているので、
  * これも Object の配列とせざるを得ない。
+ * 要素型が分かっていて固定できるときは型パラメータとして与えることもできる。
  */
-public class DtoArray {
+public class DtoArray<E> {
 	/**
 	 * 復号化済みのオブジェクトを収める
 	 */
@@ -28,7 +29,7 @@ public class DtoArray {
 
 	/**
 	 * 配列に長さを返す。
-	 * 要素を収める領域の大きさなので、
+	 * 要素を収める領域の大きさであって、
 	 * null でない要素の個数とは限らないので注意。
 	 * @return 収められる要素の最大個数
 	 */
@@ -41,8 +42,8 @@ public class DtoArray {
 	 * @param index 0 から始まる添え字
 	 * @return index 番目の要素
 	 */
-	public Object get(int index) {
-		return dtoArray[index];
+	public E get(int index) {
+		return (E) dtoArray[index];
 	}
 
 	/**

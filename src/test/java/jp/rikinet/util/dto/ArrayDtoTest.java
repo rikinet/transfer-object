@@ -35,7 +35,7 @@ public class ArrayDtoTest {
 	}
 	private static class OuterDto extends Root {
 		private static final String CLASS_NAME = "outer";
-		private DtoArray member;
+		private DtoArray<ElementDto> member;
 		private DtoArray flags;
 		private DtoArray names;
 		public OuterDto() {
@@ -50,7 +50,7 @@ public class ArrayDtoTest {
 		public static String getClassName() {
 			return CLASS_NAME;
 		}
-		public DtoArray getMember() {
+		public DtoArray<ElementDto> getMember() {
 			return member;
 		}
 		public void setMember(DtoArray member) {
@@ -86,9 +86,9 @@ public class ArrayDtoTest {
 				+ ", \"names\": [ \"foo\", \"bar\", \"baz\" ] }";
 		OuterDto dto = DtoFactory.deserialize(source);
 		assertNotNull(dto);
-		DtoArray mem = dto.getMember();
+		DtoArray<ElementDto> mem = dto.getMember();
 		assertNotNull(mem);
 		assertEquals(3, mem.size());
-		assertEquals("baz", ((ElementDto) mem.get(2)).getName());
+		assertEquals("baz", mem.get(2).getName());
 	}
 }
