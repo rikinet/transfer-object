@@ -105,6 +105,29 @@ public class DtoFactory {
 	}
 
 	/**
+	 * JSONArray を DtoArray に変換する。
+	 * array や object が入れ子になっていたら、変換を再帰的に繰り返す。
+	 * @param ja 変換の元になる JSONArray
+	 * @return 生成した DtoArray
+	 */
+	private static DtoArray convert(JSONArray ja) {
+		DtoArray da = new DtoArray(ja.length());
+		for (int i = 0; i < ja.length(); i++) {
+			Object obj = ja.get(i);
+			if (obj instanceof JSONArray) {
+				DtoArray subArr = convert((JSONArray) obj);
+				da.put(i, subArr);
+			} else if (obj instanceof JSONObject) {
+				Root dto = convert((JSONObject) obj);
+				da.put(i, dto);
+			} else {
+				da.put(i, (Object) obj);
+			}
+		}
+		return da;
+	}
+
+	/**
 	 * 与えられた JSDONObject から DTO を生成する。
 	 * 入れ子のオブジェクトがあり、DTO に適切な setter があるなら、
 	 * プロパティとして設定する。これを再帰的に行う。
@@ -133,16 +156,14 @@ public class DtoFactory {
 			Object val = jo.get(key);
 			if (val instanceof JSONArray) {
 				// construct array
+				DtoArray da = convert((JSONArray) val);
 				// set as property value
-				setProperty(newDto, key, null);
-				continue;
-			}
-			if (val instanceof JSONObject) {
+				setProperty(newDto, key, da);
+			} else if (val instanceof JSONObject) {
 				// construct sub object
 				Root subObj = convert((JSONObject) val);
 				// set as property value
 				setProperty(newDto, key, subObj);
-				continue;
 			}
 		}
 		return newDto;
