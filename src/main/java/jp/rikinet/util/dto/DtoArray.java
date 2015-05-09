@@ -2,6 +2,8 @@ package jp.rikinet.util.dto;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
+
 /**
  * JSON の配列に相当する Root の補助クラス。
  * JSON の配列が任意の型の詰め合わせを許容しているので、
@@ -12,7 +14,7 @@ public class DtoArray<E> {
 	/**
 	 * 復号化済みのオブジェクトを収める
 	 */
-	private Object[] dtoArray;
+	private ArrayList<E> dtoArray;
 	/**
 	 * dtoArray に収められたオブジェクトの元や内部表現を収める
 	 */
@@ -23,7 +25,7 @@ public class DtoArray<E> {
 	 * 大きさに関して静的な構造であることに注意。
 	 */
 	public DtoArray(int siz) {
-		dtoArray = new Object[siz];
+		dtoArray = new ArrayList<>();
 		jsonArray = new JSONArray();
 	}
 
@@ -34,7 +36,7 @@ public class DtoArray<E> {
 	 * @return 収められる要素の最大個数
 	 */
 	public long size() {
-		return dtoArray.length;
+		return dtoArray.size();
 	}
 
 	/**
@@ -43,7 +45,7 @@ public class DtoArray<E> {
 	 * @return index 番目の要素
 	 */
 	public E get(int index) {
-		return (E) dtoArray[index];
+		return dtoArray.get(index);
 	}
 
 	/**
@@ -51,15 +53,15 @@ public class DtoArray<E> {
 	 * @param index 0 から始まる添え字
 	 * @param obj index 番目の新しい要素
 	 */
-	public void put(int index, Object obj) {
+	public void put(int index, E obj) {
 		if (obj instanceof Boolean) {
-			jsonArray.put(index, (Boolean) obj);
+			jsonArray.put(index, obj);
 		} else if (obj instanceof Long) {
-			jsonArray.put(index, (Long) obj);
+			jsonArray.put(index, obj);
 		} else if (obj instanceof Double) {
-			jsonArray.put(index, (Double) obj);
+			jsonArray.put(index, obj);
 		} else if (obj instanceof String) {
-			jsonArray.put(index, (String) obj);
+			jsonArray.put(index, obj);
 		} else if (obj instanceof Root) {
 			jsonArray.put(index, ((Root) obj).jsonObj);
 		} else if (obj instanceof DtoArray) {
@@ -67,6 +69,6 @@ public class DtoArray<E> {
 		} else {
 			throw new IllegalArgumentException("object type is unknown");
 		}
-		dtoArray[index] = obj;
+		dtoArray.add(index,obj);
 	}
 }

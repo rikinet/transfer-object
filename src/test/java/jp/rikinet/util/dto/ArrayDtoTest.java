@@ -6,15 +6,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-/**
+/*
  * Created by kiminori on 15/05/05.
  */
 public class ArrayDtoTest {
-	private static class ElementDto extends Root {
+	@DtoType(ElementDto.CLASS_NAME)
+	static class ElementDto extends Root {
 		// 配列の要素
-		private static final String CLASS_NAME = "elem";
+		static final String CLASS_NAME = "elem";
 		public ElementDto() {
 			super();
 			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
@@ -23,9 +23,6 @@ public class ArrayDtoTest {
 			super(jo);
 			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
 		}
-		public static String getClassName() {
-			return CLASS_NAME;
-		}
 		public String getName() {
 			return jsonObj.getString("name");
 		}
@@ -33,8 +30,9 @@ public class ArrayDtoTest {
 			jsonObj.put("name,", name);
 		}
 	}
-	private static class OuterDto extends Root {
-		private static final String CLASS_NAME = "outer";
+	@DtoType(OuterDto.CLASS_NAME)
+	static class OuterDto extends Root {
+		static final String CLASS_NAME = "outer";
 		private DtoArray<ElementDto> member;
 		private DtoArray flags;
 		private DtoArray names;
@@ -47,13 +45,10 @@ public class ArrayDtoTest {
 			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
 
 		}
-		public static String getClassName() {
-			return CLASS_NAME;
-		}
 		public DtoArray<ElementDto> getMember() {
 			return member;
 		}
-		public void setMember(DtoArray member) {
+		public void setMember(DtoArray<ElementDto> member) {
 			this.member = member;
 		}
 		public DtoArray getFlags() {

@@ -52,7 +52,7 @@ public class DtoFactory {
 	private static HashMap<String, Class<? extends Root>> classTable;
 
 	static {
-		classTable = new HashMap<String, Class<? extends Root>>();
+		classTable = new HashMap<>();
 	}
 
 	private DtoFactory() {
@@ -66,21 +66,17 @@ public class DtoFactory {
 	 * @param <T> DTO のクラス
 	 * @return 生成した DTO
 	 */
-	private static <T extends Root> T newSimpleDto(Class<?> cl, JSONObject jo) {
-		T skeleton = null;
+	private static <T extends Root> T newSimpleDto(Class<T> cl, JSONObject jo) {
+		T dto;
 		try {
-			Constructor<?> cons = cl.getConstructor(JSONObject.class);
-			skeleton = (T) cons.newInstance(jo);
+			Constructor<T> cons = cl.getConstructor(JSONObject.class);
+			dto = cons.newInstance(jo);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException("constructor not found", e);
+		} catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+			throw new IllegalArgumentException("constructor call failed", e);
 		}
-		return skeleton;
+		return dto;
 	}
 
 	/**
@@ -96,11 +92,10 @@ public class DtoFactory {
 			Method m = cl.getMethod(mName, value.getClass());
 			m.invoke(dto, value);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException("setter not found", e);
+		}
+		catch (InvocationTargetException | IllegalAccessException e) {
+			throw new IllegalArgumentException("setter call failed", e);
 		}
 	}
 
@@ -110,8 +105,10 @@ public class DtoFactory {
 	 * @param ja 変換の元になる JSONArray
 	 * @return 生成した DtoArray
 	 */
-	private static DtoArray convert(JSONArray ja) {
-		DtoArray da = new DtoArray(ja.length());
+	@SuppressWarnings("unchecked")
+	private static <E> DtoArray<E> convert(JSONArray ja) {
+		DtoArray da = new DtoArray<E>(ja.length());
+		// 任意の型が現れうるので、型パラメータによる制限は不適当
 		for (int i = 0; i < ja.length(); i++) {
 			Object obj = ja.get(i);
 			if (obj instanceof JSONArray) {
@@ -121,7 +118,7 @@ public class DtoFactory {
 				Root dto = convert((JSONObject) obj);
 				da.put(i, dto);
 			} else {
-				da.put(i, (Object) obj);
+				da.put(i, obj);
 			}
 		}
 		return da;
@@ -147,7 +144,7 @@ public class DtoFactory {
 			// 型が登録されていない
 			return null;
 		}
-		T newDto = newSimpleDto(cl, jo);
+		T newDto = newSimpleDto((Class<T>) cl, jo);
 
 		// 下位オブジェクトをスキャンして、あればプロパティとしてセットする
 		Iterator<String> iter = jo.keys();
@@ -186,12 +183,9 @@ public class DtoFactory {
 	 * @param clazz Root を継承したクラス
 	 */
 	public static void register(Class<? extends Root> clazz) {
-		try {
-			Method m = clazz.getMethod("getClassName");
-			String c = (String) m.invoke(null);
-			classTable.put(c, clazz);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("can't get class name.", e);
-		}
+		if (!clazz.isAnnotationPresent(DtoType.class))
+			return;
+		DtoType dt = clazz.getAnnotation(DtoType.class);
+		classTable.put(dt.value(), clazz);
 	}
 }

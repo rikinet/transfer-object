@@ -11,16 +11,19 @@ import org.json.JSONObject;
  *
  * @see DtoFactory
  */
+@DtoType(Root.CLASS_NAME)
 public class Root {
 
 	/**
 	 * JSON に埋め込むデータ型名。
+	 * アンダースコアで始まる名前はこのパッケージ内でのみ使用する。
 	 */
-	private static final String CLASS_NAME = "_root_";
+	static final String CLASS_NAME = "_root_";
 
 	/**
 	 * フィールドを設ける代わりに各プロパティを保持する。
 	 * フィールド名をキーにするマップのように扱う。
+	 * 拡張クラスでのアクセスを許可する。
 	 */
 	protected JSONObject jsonObj;
 
@@ -42,16 +45,6 @@ public class Root {
 	public Root(JSONObject obj) {
 		jsonObj = obj;
 		jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
-	}
-
-	/**
-	 * JSON に埋め込むクラス名。
-	 * システムでユニークになっていれば良く、Java のクラス名と
-	 * 関係なくても良い。
-	 * @return JSON に埋め込む、このクラスを表す名前
-	 */
-	public static String getClassName() {
-		return CLASS_NAME;
 	}
 
 	/**

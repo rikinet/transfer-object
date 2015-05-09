@@ -12,8 +12,9 @@ import static org.junit.Assert.*;
  * Created by kiminori on 15/05/03.
  */
 public class SimpleDtoTest {
-	private static class SimpleDto extends Root {
-		private static final String CLASS_NAME = "SimpleDto";
+	@DtoType(SimpleDto.CLASS_NAME)
+	static class SimpleDto extends Root {
+		static final String CLASS_NAME = "SimpleDto";
 		public SimpleDto() {
 			super();
 			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
@@ -21,9 +22,6 @@ public class SimpleDtoTest {
 		public SimpleDto(JSONObject jobj) {
 			super(jobj);
 			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
-		}
-		public static String getClassName() {
-			return CLASS_NAME;
 		}
 		public String getTitle() {
 			return jsonObj.getString("title");
@@ -73,7 +71,9 @@ public class SimpleDtoTest {
 		String source = "{\"_class_\":\"SimpleDto\""
 				+ ",\"title\":\"foobar\",\"age\":105"
 				+ ", \"flag\": false, \"rate\": 1.25 }";
+		assertTrue(SimpleDto.class.isAnnotationPresent(DtoType.class));
 		SimpleDto dto = DtoFactory.deserialize(source);
+		assertNotNull(dto);
 		assertEquals("foobar", dto.getTitle());
 		assertEquals(105, dto.getAge());
 		assertFalse(dto.getFlag());

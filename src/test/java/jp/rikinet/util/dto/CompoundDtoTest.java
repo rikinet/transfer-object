@@ -4,28 +4,24 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Comparator;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kiminori on 15/05/04.
  */
 public class CompoundDtoTest {
-	private static class CompoundSub extends Root {
+	@DtoType(CompoundSub.CLASS_NAME)
+	static class CompoundSub extends Root {
 		/* { "name": "foobar", "age": 105 } */
+		static final String CLASS_NAME = "CompoundSub";
 		public CompoundSub() {
 			super();
-			jsonObj.put(DtoFactory.KEY_CLASS, "CompoundSub");
+			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
 		}
 		public CompoundSub(JSONObject jObj) {
 			super(jObj);
-			jsonObj.put(DtoFactory.KEY_CLASS, "CompoundSub");
-		}
-		public static String getClassName() {
-			return "CompoundSub";
+			jsonObj.put(DtoFactory.KEY_CLASS, CLASS_NAME);
 		}
 		public String getName() {
 			return jsonObj.getString("name");
@@ -40,7 +36,8 @@ public class CompoundDtoTest {
 			jsonObj.put("age", age);
 		}
 	}
-	private static class CompoundRoot extends Root {
+	@DtoType("CompoundRoot")
+	static class CompoundRoot extends Root {
 		/*
 		 * { "from": { "name": "alice", "age": 33 },
 		 *   "to": { "name": "bob", "age": 31 } }
@@ -54,10 +51,6 @@ public class CompoundDtoTest {
 		public CompoundRoot(JSONObject jObj) {
 			super(jObj);
 			jsonObj.put(DtoFactory.KEY_CLASS, "CompoundRoot");
-
-		}
-		public static String getClassName() {
-			return "CompoundRoot";
 		}
 		public CompoundSub getFrom() {
 			return this.from;
