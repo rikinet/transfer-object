@@ -91,4 +91,22 @@ public class SimpleDtoTest {
 		System.out.println(str);
 		assertNotNull(str);
 	}
+
+	@Test
+	public void codecTest() {
+		SimpleDto src = new SimpleDto();
+		src.setAge(44);
+		src.setFlag(true);
+		src.setRate(2.2d);
+		src.setTitle("abcdefg");
+		String json = src.toString();
+
+		SimpleDto dst = DtoFactory.deserialize(json);
+		assertNotNull(dst);
+		assertTrue(src != dst);
+		assertEquals(src.getAge(), dst.getAge());
+		assertEquals(src.getFlag(), dst.getFlag());
+		assertEquals(src.getRate(), dst.getRate(), 0.001d);
+		assertEquals(src.getTitle(), dst.getTitle());
+	}
 }
