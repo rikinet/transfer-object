@@ -136,13 +136,13 @@ public class DtoFactory {
 		String typeName = jo.getString(KEY_CLASS);
 		if (typeName == null) {
 			// 型ヒントを含んでない
-			return null;
+			throw new IllegalArgumentException("Type key _class_ undefined.");
 		}
 
 		Class<?> cl = classTable.get(typeName);
 		if (cl == null) {
 			// 型が登録されていない
-			return null;
+			throw new IllegalArgumentException("Type " + classTable.get(typeName) + "not registered.");
 		}
 		T newDto = newSimpleDto((Class<T>) cl, jo);
 
