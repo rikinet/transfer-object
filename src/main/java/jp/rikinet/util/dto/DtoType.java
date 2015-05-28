@@ -1,13 +1,16 @@
 package jp.rikinet.util.dto;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * DtoFactory に型を登録するときに使用する名前を与える。
  * アノテーションの方がメソッドや interface よりも簡潔に書けると思われる。
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface DtoType {
 	/**
 	 * {@link DtoFactory#deserialize} の対象になる型を識別する名前を与える。
